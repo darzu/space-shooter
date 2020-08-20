@@ -57,7 +57,15 @@ mySprite = sprites.create(img`
 controller.moveSprite(mySprite, 100, 100)
 mySprite.setFlag(SpriteFlag.StayInScreen, true)
 info.setLife(5)
-game.onUpdateInterval(2000, function () {
+let enemySpeed = 20
+let enemySpawnTime = 2000
+game.onUpdateInterval(5000, function () {
+    enemySpeed += 5
+    enemySpeed = Math.min(enemySpeed, 50)
+    enemySpawnTime += -200
+    enemySpawnTime = Math.max(enemySpawnTime, 500)
+})
+forever(function () {
     enemyShip = sprites.create(img`
         . . . . . . . . . . . . . . . . 
         . . . . . . . . 2 2 . . . . . . 
@@ -77,10 +85,11 @@ game.onUpdateInterval(2000, function () {
         . . . . . . . . . . . . . . . . 
         `, SpriteKind.Enemy)
     enemyShip.x = scene.screenWidth()
-    enemyShip.vx = -20
+    enemyShip.vx = 0 - enemySpeed
     enemyShip.y = randint(10, scene.screenHeight() - 10)
     statusbar = statusbars.create(15, 2, StatusBarKind.EnemyHealth)
     statusbar.setColor(5, 12)
     statusbar.max = 100
     statusbar.attachToSprite(enemyShip)
+    pause(enemySpawnTime)
 })

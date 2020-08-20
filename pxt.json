@@ -1,5 +1,5 @@
 {
-    "name": "space shooter with HEALTH BARS",
+    "name": "space shooter",
     "description": "",
     "dependencies": {
         "device": "*",
