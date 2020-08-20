@@ -1,8 +1,9 @@
 {
-    "name": "space shooter",
+    "name": "space shooter with HEALTH BARS",
     "description": "",
     "dependencies": {
-        "device": "*"
+        "device": "*",
+        "pxt-status-bar": "github:jwunderl/pxt-status-bar#v0.2.10"
     },
     "files": [
         "main.blocks",
