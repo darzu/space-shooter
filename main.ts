@@ -1,5 +1,6 @@
 namespace SpriteKind {
     export const PowerUP = SpriteKind.create()
+    export const Mode = SpriteKind.create()
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     projectile = sprites.createProjectileFromSprite(img`
@@ -89,7 +90,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.PowerUP, function (sprite, other
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.Mode)
     doublefireMode.setPosition(48, 7)
     doublefireMode.lifespan = 10000
     otherSprite.destroy()
