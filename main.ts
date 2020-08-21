@@ -1,3 +1,6 @@
+namespace SpriteKind {
+    export const PowerUP = SpriteKind.create()
+}
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     projectile = sprites.createProjectileFromSprite(img`
         . . . . . . . . . . . . . . . . 
@@ -17,9 +20,79 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         `, mySprite, 200, 0)
+    if (doublefireMode && doublefireMode.lifespan > 0) {
+        projectile.y += -5
+        projectile = sprites.createProjectileFromSprite(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . 9 9 9 9 . . . . 
+            . . . . . . 9 9 9 9 5 9 . . . . 
+            . 9 9 9 9 9 9 9 5 5 9 9 . . . . 
+            . . . . . . . 9 9 9 9 . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `, mySprite, 200, 0)
+        projectile.y += 5
+    }
 })
 statusbars.onZero(StatusBarKind.EnemyHealth, function (status) {
-    status.spriteAttachedTo().destroy()
+    enemyDeath(status.spriteAttachedTo())
+})
+function enemyDeath (enemy: Sprite) {
+    enemy.destroy(effects.disintegrate, 500)
+    if (Math.percentChance(10)) {
+        powerUp = sprites.create(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . 8 8 8 8 8 8 8 . . . . 
+            . . . . 8 7 7 7 7 7 7 7 8 . . . 
+            . . . 8 8 7 7 7 7 7 7 7 8 8 . . 
+            . . 8 8 8 7 7 8 8 8 7 7 8 8 8 . 
+            . . 8 8 8 7 7 8 8 8 7 7 8 8 8 . 
+            . . 8 8 8 7 7 8 8 8 7 7 8 8 8 . 
+            . . 8 8 8 7 7 7 7 7 7 7 8 8 8 . 
+            . . 8 8 8 7 7 7 7 7 7 7 8 8 8 . 
+            . . 8 8 8 7 7 8 8 8 8 8 8 8 8 . 
+            . . 8 8 8 7 7 8 8 8 8 8 8 8 8 . 
+            . . . 8 8 7 7 8 8 8 8 8 8 8 . . 
+            . . . . 8 8 8 8 8 8 8 8 8 . . . 
+            . . . . . 8 8 8 8 8 8 8 . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `, SpriteKind.PowerUP)
+        powerUp.x = enemy.x
+        powerUp.y = enemy.y
+    }
+}
+sprites.onOverlap(SpriteKind.Player, SpriteKind.PowerUP, function (sprite, otherSprite) {
+    doublefireMode = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . 9 9 9 9 . . . 
+        . . . . . . . 9 9 9 9 5 9 . . . 
+        . . 9 9 9 9 9 9 9 5 5 9 9 . . . 
+        . . . . . . . . 9 9 9 9 . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . 9 9 9 9 . . . 
+        . . . . . . . 9 9 9 9 5 9 . . . 
+        . . 9 9 9 9 9 9 9 5 5 9 9 . . . 
+        . . . . . . . . 9 9 9 9 . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Player)
+    doublefireMode.setPosition(48, 7)
+    doublefireMode.lifespan = 10000
+    otherSprite.destroy()
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
     sprite.destroy()
@@ -28,11 +101,13 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, oth
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
     info.changeLifeBy(-1)
-    otherSprite.destroy(effects.disintegrate, 500)
     scene.cameraShake(4, 500)
+    enemyDeath(otherSprite)
 })
 let statusbar: StatusBarSprite = null
 let enemyShip: Sprite = null
+let powerUp: Sprite = null
+let doublefireMode: Sprite = null
 let projectile: Sprite = null
 let mySprite: Sprite = null
 effects.starField.startScreenEffect()
